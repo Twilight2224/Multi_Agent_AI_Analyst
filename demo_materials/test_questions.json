@@ -1,0 +1,81 @@
+[
+  {
+    "id": "T01",
+    "type": "SQL",
+    "question": "How many customers churned in Q1 2025?",
+    "expected": "4",
+    "expected_steps": ["data(sql)", "critic"]
+  },
+  {
+    "id": "T02",
+    "type": "SQL",
+    "question": "What churn reason occurred most often?",
+    "expected": "Missing integration",
+    "expected_steps": ["data(sql)", "critic"]
+  },
+  {
+    "id": "T03",
+    "type": "SQL",
+    "question": "How many SMB customers churned?",
+    "expected": "3",
+    "expected_steps": ["data(sql)", "critic"]
+  },
+  {
+    "id": "T04",
+    "type": "RAG",
+    "question": "What is the first-response target for an Enterprise Priority 1 incident?",
+    "expected": "30 minutes",
+    "expected_steps": ["retriever", "critic"]
+  },
+  {
+    "id": "T05",
+    "type": "RAG",
+    "question": "How long do customers have to request a refund?",
+    "expected": "14 calendar days",
+    "expected_steps": ["retriever", "critic"]
+  },
+  {
+    "id": "T06",
+    "type": "RAG",
+    "question": "Who owns an escalation unresolved after two business days?",
+    "expected": "Nadia Karimova",
+    "expected_steps": ["retriever", "critic"]
+  },
+  {
+    "id": "T07",
+    "type": "RAG",
+    "question": "Which CRM platform is supported in the first beta, and when is it planned?",
+    "expected": "HubSpot; 15 September 2026",
+    "expected_steps": ["retriever", "critic"]
+  },
+  {
+    "id": "T08",
+    "type": "Multi-agent",
+    "question": "How many customers churned in Q1 2025, and what internal policy could help reduce slow-support churn?",
+    "expected": "4; Enterprise P1 response within 30 minutes / at-risk contact within one business day",
+    "expected_steps": ["data(sql)", "retriever", "critic"]
+  },
+  {
+    "id": "T09",
+    "type": "Grounding",
+    "question": "What exact date will Salesforce support be released?",
+    "expected": "No committed release date / unknown",
+    "expected_steps": ["retriever", "critic"]
+  },
+  {
+    "id": "T10",
+    "type": "Memory turn 1",
+    "session_id": "memory-demo-001",
+    "question": "Remember that our customer success director is Nadia Karimova.",
+    "expected": "Nadia Karimova",
+    "expected_steps": ["critic"]
+  },
+  {
+    "id": "T11",
+    "type": "Memory turn 2",
+    "session_id": "memory-demo-001",
+    "question": "Who is our customer success director?",
+    "expected": "Nadia Karimova",
+    "expected_steps": ["memory", "critic"]
+  }
+]
