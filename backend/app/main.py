@@ -112,7 +112,6 @@ async def chat(request: ChatRequest) -> dict:
         "critic_reason": result.get("critic_reason", ""),
     }
 
-
 @app.post("/chat/stream")
 async def chat_stream(request: ChatRequest) -> StreamingResponse:
     _require_key()
