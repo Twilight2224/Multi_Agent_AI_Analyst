@@ -5,7 +5,7 @@ A deployable capstone with a LangGraph supervisor that delegates to document ret
 ```mermaid
 flowchart TD
   Q[Question] --> M[Memory]
-  M --> S[Supervisor: gemini-flash]
+  M --> S[Supervisor: gemini-flash-lite]
   S -->|retriever| R[RAG: gemini-embedding]
   S -->|web| W[Web agent]
   S -->|data| D[Read-only SQL]
