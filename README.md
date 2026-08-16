@@ -15,7 +15,7 @@ flowchart TD
   D --> S
   C --> S
   S -->|finish| G[Draft: gemini-flash-lite]
-  G --> V[Critic: gemini-flash]
+  G --> V[Critic: gemini-flash-lite]
   V -->|revise| S
   V -->|approved| A[Answer + sources]
 ```
