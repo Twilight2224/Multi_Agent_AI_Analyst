@@ -27,7 +27,7 @@ All LangChain model calls use the class proxy at `https://saidazam-litellm-proxy
 | Purpose | Proxy model |
 | --- | --- |
 | Retrieval, SQL, code, drafting | `gemini-flash-lite` |
-| Supervisor and critic | `gemini-flash` |
+| Supervisor and critic | `gemini-flash-lite` |
 | RAG and memory vectors | `gemini-embedding` |
 
 1. Copy the root `.env.example` values into the existing root `.env` if needed.
