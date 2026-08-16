@@ -22,7 +22,7 @@ class Settings:
     database_url = os.getenv("DATABASE_URL", "sqlite:///data/company.db")
     qdrant_path = os.getenv("QDRANT_PATH", "storage/qdrant")
     frontend_origin = os.getenv("FRONTEND_ORIGIN", "http://localhost:3000")
-    max_graph_steps = int(os.getenv("MAX_GRAPH_STEPS", "18"))
+    max_graph_steps = int(os.getenv("MAX_GRAPH_STEPS", "12"))
 
     gemini_base_url = "https://saidazam-litellm-proxy.hf.space/v1"
 
