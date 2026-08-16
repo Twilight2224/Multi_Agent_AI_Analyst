@@ -52,13 +52,23 @@ def supervisor(state: AgentState) -> dict:
     if actions >= 4:
         decision = Route(next="finish")
     else:
+        doc_preview = "\n---\n".join(doc[:400] for doc in state.get("documents", [])) or "none retrieved yet"
         prompt = f"""You are a supervisor routing a business analyst question.
 Question: {state['question']}
 Past relevant conversation (context only, NOT usable as evidence for this answer): {state.get('memory', [])}
 Completed steps this turn: {state.get('steps', [])}
-Evidence collected this turn: docs={len(state.get('documents', []))}; SQL={bool(state.get('sql_result'))}; code={bool(state.get('code_result'))}.
-Choose exactly one next route. Use data for database facts, retriever for private documents, web only for current public information, code for arithmetic.
-You may only choose finish if 'Evidence collected this turn' shows at least one non-empty source, OR the question is purely conversational (e.g. asking to rephrase or clarify a prior answer with no new facts needed). Do not repeat a completed specialist unless revising needs it."""
+Retrieved documents so far (private knowledge base and/or web results):
+{doc_preview}
+SQL evidence: {state.get('sql_result') or 'none'}
+Code evidence: {state.get('code_result') or 'none'}
+
+Routing priority:
+1. If 'retriever' has not run yet this turn, prefer it first for any question that could be answered from private documents.
+2. Only route to 'web' if the retrieved documents above are empty, or clearly leave a specific part of the question unanswered that needs current/external information. Do not use web to answer something the documents already cover.
+3. If the documents already fully answer the question, choose finish instead of also calling web.
+4. Use 'data' for database facts, 'code' for arithmetic.
+5. Do not repeat a completed specialist unless revising needs it.
+You may only choose finish if there is at least one non-empty source above, OR the question is purely conversational (e.g. asking to rephrase or clarify a prior answer with no new facts needed)."""
         try:
             decision = supervisor_llm().with_structured_output(Route).invoke(prompt)
             has_evidence = bool(state.get("documents") or state.get("sql_result") or state.get("code_result"))
@@ -126,13 +136,15 @@ Use literals and basic built-ins only. No imports, files, network, input, eval, 
 
 
 def generate_answer(state: AgentState) -> dict:
+    docs = state.get("documents", [])
+    srcs = state.get("sources", [])
     evidence = "\n\n".join([
-        *(f"Document: {doc}" for doc in state.get("documents", [])),
+        *(f"Source ({src}): {doc}" for doc, src in zip(docs, srcs)),
         f"SQL result: {state.get('sql_result') or 'none'}",
         f"Code result: {state.get('code_result') or 'none'}",
         *(f"Memory: {item}" for item in state.get("memory", [])),
     ])
-    prompt = f"""Answer the question using only the evidence below. Be concise, state uncertainty or missing evidence plainly, and never invent a source.
+    prompt = f"""Answer the question using only the evidence below. When multiple sources are present, treat the one most directly relevant to the question (e.g. a database result for a factual count, an uploaded document for a policy question) as the primary claim, and use the others only to add context or fill gaps — never let a supporting source override the primary one. If evidence came from the user's own uploaded documents versus the web, say so where relevant. Be concise, state uncertainty or missing evidence plainly, and never invent a source.
 Question: {state['question']}
 Evidence:
 {evidence or 'No evidence was collected.'}
