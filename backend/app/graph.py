@@ -31,6 +31,7 @@ def load_memory(state: AgentState) -> dict:
     return {"memory": memory, "steps": _steps(state, "memory")}
 
 
+
 def _fallback_route(state: AgentState) -> Route:
     done = " ".join(state.get("steps", []))
     q = state["question"].lower()
@@ -38,12 +39,12 @@ def _fallback_route(state: AgentState) -> Route:
         return Route(next="data")
     if not any(x in done for x in ("code",)) and any(word in q for word in ("calculate", "percent", "percentage", "median", "ratio", "math")):
         return Route(next="code")
-    if not any(x in done for x in ("web",)) and any(word in q for word in ("latest", "today", "current", "news", "web")):
-        return Route(next="web")
     if not any(x in done for x in ("retriever",)):
         return Route(next="retriever")
+    if not any(x in done for x in ("web",)) and any(word in q for word in ("latest", "today", "current", "news", "web")):
+        return Route(next="web")
     return Route(next="finish")
-
+    
 
 def supervisor(state: AgentState) -> dict:
     # A hard budget guarantees termination even if a provider returns a poor route.
